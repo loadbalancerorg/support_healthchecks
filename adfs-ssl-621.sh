@@ -1,4 +1,6 @@
 #!/bin/bash
 host=$3   
 port=$4
-openssl s_client -connect $3:$4 </dev/null #2>&1
+echo GET /adfs/ls/idpinitiatedsignon.aspx\r\n | openssl s_client -connect $3:$4
+
+
