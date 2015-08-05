@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 ###############################################################################
 #
-#
 #  On your webserver you need a file which is defined by 
 #  $request and as an example is made a little obscure
 #  it is called _._lb_maintance on your webserver
@@ -14,6 +13,12 @@
 #  "showtime" is here to ensure lbcli does nothing and is needed for the 
 #  healthcheck to work when the server is online and no change is needed
 #  this is a Layer4 healthcheck and is not designed for Layer7 HAProxy. 
+#
+#  example file on your real server has the contents "status;vipname;ripname"
+#
+#  Where the status is as explained perviously, the vipname must be the vip 
+#  your real server is associated to and the ripname is the server(self) 
+#  that is affected by the lbcli actions.... Enjoy
 #
 ###############################################################################
 
