@@ -1,0 +1,43 @@
+#!/usr/bin/perl
+###############################################################################
+#
+#  On your webserver you need a file which is defined by 
+#  $request and as an example is made a little obscure
+#  it is called _._lb_maintance on your webserver
+#  on the $url you need to define if it is http:// or https://
+#
+#  Andrew Smalley (c) Loadbalancer.org Aug 2015
+#  http://www.loadbalancer.org
+#  
+#  The syntax of the file is state keywords "online" "halt" "drain" "showtime"
+#  "showtime" is here to ensure lbcli does nothing and is needed for the 
+#  healthcheck to work when the server is online and no change is needed
+#  this is a Layer4 healthcheck and is not designed for Layer7 HAProxy. 
+#
+#  example file on your real server has the contents "status;vipname;ripname"
+#
+#  Where the status is as explained perviously, the vipname must be the vip 
+#  your real server is associated to and the ripname is the server(self) 
+#  that is affected by the lbcli actions.... Enjoy
+#
+###############################################################################
+
+my $vip=$ARGV[0];
+my $port=$ARGV[1];
+my $rip=$ARGV[2];
+my $request="_._lb_maintance";
+my $url = "https://" . $rip . ":" . $port . "/" . $request;
+use LWP::Simple;
+  my $content = get $url;
+  die "Couldn't get $url" unless defined $content;
+ my $maintance = get $url;
+
+use Data::Dumper qw(Dumper);
+
+my @words = split /;/, $maintance;
+my $lbcli=" lbcli --action " . $words[0] . " --vip " . $words[1] . " --rip " . $words[2];
+if($words[0] eq "showtime") {
+        print "The Loadbalancer.org appliance says your RIP as Showtime!";
+} else {
+        system($lbcli);
+}
