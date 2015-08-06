@@ -28,12 +28,9 @@ my $rip=$ARGV[2];
 my $request="_._lb_maintance";
 my $url = "http://" . $rip . ":" . $port . "/" . $request;
 use LWP::Simple;
-  my $content = get $url;
-  die "Couldn't get $url" unless defined $content;
- my $maintance = get $url;
-
+my $maintance = get $url;
+die "Couldn't get $url" unless defined $content;
 use Data::Dumper qw(Dumper);
-
 my @words = split /;/, $maintance;
 my $lbcli=" lbcli --action " . $words[0] . " --vip " . $words[1] . " --rip " . $words[2];
 if($words[0] eq "showtime") {
