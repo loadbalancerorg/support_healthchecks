@@ -72,7 +72,7 @@ function check-statuscode {
 		if	[ $(cat $OUTPUTDIR/rip1.log) -eq 1 ]
 		then
 		EXIT_CODE2=1
-		echo "$(date '+%Y-%m-%d_%H:%M:%S') $3"  >> $OUTPUTDIR/faillog.log
+		echo "$(date '+%Y-%m-%d_%H:%M:%S') $REAL_IP"  >> $OUTPUTDIR/faillog.log
 		lbcli --action halt --vip $VIP1 --rip $RIP1
 		lbcli --action halt --vip $VIP2 --rip $RIP1
 		lbcli --action halt --vip $VIP3 --rip $RIP1
