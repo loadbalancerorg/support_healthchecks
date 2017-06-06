@@ -1,0 +1,44 @@
+#!/bin/bash
+#
+# Layer7 drop ICMP if all real servers are down. 
+# adapt firewall rules to suit - this just drops icmp type 8 packets
+# Created by Andrew Smalley ' loadbalancer.org (c)2017 June 6
+VIP=CHANGE.TO.YOUR.VIP.NAME
+
+RIPS=$(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep ppmy | cut -d"," -f2 | grep -v "FRONTEND" | grep -v "backup" | grep -v "BACKEND")
+for RIP in $RIPS; do
+   if [[ $(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | grep $RIP | cut -d"," -f18) -eq "UP" ]];
+        then
+                up=1;
+        fi
+done
+if [ $up -eq 1 ]
+then
+        if [[ $(iptables -L -v | grep -c echo-request) -eq 0 ]]
+        then
+                iptables -A INPUT -d $VIP -p icmp --icmp-type 8 -j DROP
+        fi
+elif [ $ec -eq 0 ]
+then
+        if [[ $(iptables -L -v | grep -c echo-request) -eq 1 ]]
+        then
+                iptables -D INPUT -d $VIP -p icmp --icmp-type 8 -j DROP
+        fi
+fi
+
+# Uncomment the healthcheck you actually want to use
+
+#sh check-ipv6-ping  $1 $2 $3 $4
+#sh Exchange-2013.sh $1 $2 $3 $4
+#sh http_ntlm_proxy_check.sh $1 $2 $3 $4
+#sh Multi-port-check.sh $1 $2 $3 $4
+#sh proxy-check.sh $1 $2 $3 $4
+#sh SMTP-check.sh $1 $2 $3 $4
+#sh sni-check-v2.sh $1 $2 $3 $4
+#sh DICOM-C-ECHO $1 $2 $3 $4
+#sh Exchange_IMAP.sh $1 $2 $3 $4
+#sh icmp-firewall-check $1 $2 $3 $4
+sh ping.sh $1 $2 $3 $4
+#sh sip_check.pl $1 $2 $3 $4
+#sh sni-check.sh $1 $2 $3 $4
+
