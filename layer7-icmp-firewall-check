@@ -2,8 +2,9 @@
 PATH=/usr/bin:/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
 #
 # Layer7 iptables DROP if all real servers are down.
-# adapt firewall rules to suit - this just drops icmp type 8 packets
+# adapt firewall rules to suit - this just drops packets to the VIP
 # Created by Andrew Smalley ' loadbalancer.org (c)2017 June 6
+
 VIP=VIPTOCHECK
 VIPIP=$1
 UP=0
@@ -11,7 +12,7 @@ RIPS=$(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep 
 for RIP in $RIPS; do
         if [[ $(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | grep $RIP | cut -d"," -f18 | grep -c UP) -eq 1 ]]
         then
-                UP=1;
+                UP=1
         fi
 done
 if [ $UP -eq 0 ]
