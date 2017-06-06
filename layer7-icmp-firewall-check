@@ -16,17 +16,15 @@ for RIP in $RIPS; do
 done
 if [ $up -eq 1 ]
 then
-        if [[ $(iptables -L -v | grep -c echo-request) -eq 0 ]]
+        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11) -eq 0 ]]
         then
-                iptables -A INPUT -d $VIPIP -p icmp --icmp-type 8 -j DROP
-	#	iptables -A INPUT -d $VIPIP -j DROP   # DROP All Traffic
+		iptables -A INPUT -d $VIPIP -j DROP   # DROP All Traffic
         fi
 elif [ $up -eq 0 ]
 then
-        if [[ $(iptables -L -v | grep -c echo-request) -eq 1 ]]
+        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11) -eq 1 ]]
         then
-                iptables -D INPUT -d $VIPIP -p icmp --icmp-type 8 -j DROP
-	#	iptables -D INPUT -d $VIPIP -j DROP   # ALLOW All Traffic
+		iptables -D INPUT -d $VIPIP -j DROP   # ALLOW All Traffic
         fi
 fi
 
