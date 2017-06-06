@@ -1,4 +1,5 @@
 #!/bin/bash
+PATH=/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
 #
 # Layer7 drop ICMP if all real servers are down. 
 # adapt firewall rules to suit - this just drops icmp type 8 packets
