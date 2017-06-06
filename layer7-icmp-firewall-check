@@ -1,40 +1,34 @@
-#!/bin/bash -x
-###############################################################################
+#!/bin/bash
+PATH=/usr/bin:/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
 #
 # Layer7 iptables DROP if all real servers are down.
-# adapt firewall rules to suit - this just drops all traffic to the VIP
-#
+# adapt firewall rules to suit - this just drops icmp type 8 packets
 # Created by Andrew Smalley ' loadbalancer.org (c)2017 June 6
-###############################################################################
-PATH=/usr/bin:/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
-
-VIP=VIPNAMETOCHECK
+VIP=VIPTOCHECK
 VIPIP=$1
-
+UP=0
 RIPS=$(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | cut -d"," -f2 | grep -v "FRONTEND" | grep -v "backup" | grep -v "BACKEND")
 for RIP in $RIPS; do
-   if [[ $(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | grep $RIP | cut -d"," -f18) -eq "UP" ]];
+        if [[ $(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | grep $RIP | cut -d"," -f18 | grep -c UP) -eq 1 ]]
         then
                 UP=1;
         fi
 done
-if [ $UP -eq 1 ]
+if [ $UP -eq 0 ]
 then
-        iptables -L -v | grep $VIPIP | cut -d' ' -f11 | grep DROP >/dev/null
-        if [ $? -eq 1 ]
+        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11 | grep -c DROP) -eq 0 ]]
         then
                 iptables -A INPUT -d $VIPIP -j DROP   # DROP All Traffic
         fi
-elif [ $UP -eq 0 ]
+fi
+if [ $UP -eq 1 ]
 then
-        iptables -L -v | grep $VIPIP | cut -d' ' -f11 | grep DROP >/dev/null
-        if [ $? -eq 0  ]
+        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11 | grep -c DROP) -eq 1 ]]
         then
                 iptables -D INPUT -d $VIPIP -j DROP   # ALLOW All Traffic
         fi
 fi
-
-# Uncomment the healthcheck you actually want to use  - ping check is default
+# Uncomment the healthcheck you actually want to use
 
 #sh check-ipv6-ping  $1 $2 $3 $4
 #sh Exchange-2013.sh $1 $2 $3 $4
@@ -49,4 +43,3 @@ fi
 sh ping.sh $1 $2 $3 $4
 #sh sip_check.pl $1 $2 $3 $4
 #sh sni-check.sh $1 $2 $3 $4
-
