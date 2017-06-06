@@ -6,6 +6,7 @@ PATH=/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
 # Created by Andrew Smalley ' loadbalancer.org (c)2017 June 6
 VIP=CHANGE.TO.YOUR.VIP.NAME
 
+
 RIPS=$(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | cut -d"," -f2 | grep -v "FRONTEND" | grep -v "backup" | grep -v "BACKEND")
 for RIP in $RIPS; do
    if [[ $(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | grep $RIP | cut -d"," -f18) -eq "UP" ]];
@@ -18,12 +19,14 @@ then
         if [[ $(iptables -L -v | grep -c echo-request) -eq 0 ]]
         then
                 iptables -A INPUT -d $VIP -p icmp --icmp-type 8 -j DROP
+	#	iptables -A INPUT -d $VIP -j DROP   # DROP All Traffic
         fi
 elif [ $ec -eq 0 ]
 then
         if [[ $(iptables -L -v | grep -c echo-request) -eq 1 ]]
         then
                 iptables -D INPUT -d $VIP -p icmp --icmp-type 8 -j DROP
+	#	iptables -D INPUT -d $VIP -j DROP   # ALLOW All Traffic
         fi
 fi
 
