@@ -16,14 +16,14 @@ for RIP in $RIPS; do
 done
 if [ $UP -eq 0 ]
 then
-        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11 | grep -c DROP) -eq 0 ]]
+        if [[ $(iptables -L -v | grep $VIPIP | grep -c DROP) -eq 0 ]]
         then
                 iptables -A INPUT -d $VIPIP -j DROP   # DROP All Traffic
         fi
 fi
 if [ $UP -eq 1 ]
 then
-        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11 | grep -c DROP) -eq 1 ]]
+        if [[ $(iptables -L -v | grep $VIPIP | grep -c DROP) -eq 1 ]]
         then
                 iptables -D INPUT -d $VIPIP -j DROP   # ALLOW All Traffic
         fi
@@ -43,3 +43,4 @@ fi
 sh ping.sh $1 $2 $3 $4
 #sh sip_check.pl $1 $2 $3 $4
 #sh sni-check.sh $1 $2 $3 $4
+
