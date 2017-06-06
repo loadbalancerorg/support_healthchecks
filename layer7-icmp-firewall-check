@@ -1,10 +1,14 @@
 #!/bin/bash -x
-PATH=/usr/bin:/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
+###############################################################################
 #
 # Layer7 iptables DROP if all real servers are down.
-# adapt firewall rules to suit - this just drops icmp type 8 packets
+# adapt firewall rules to suit - this just drops all traffic to the VIP
+#
 # Created by Andrew Smalley ' loadbalancer.org (c)2017 June 6
-VIP=ppmy
+###############################################################################
+PATH=/usr/bin:/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
+
+VIP=VIPNAMETOCHECK
 VIPIP=$1
 
 RIPS=$(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | cut -d"," -f2 | grep -v "FRONTEND" | grep -v "backup" | grep -v "BACKEND")
@@ -30,7 +34,7 @@ then
         fi
 fi
 
-# Uncomment the healthcheck you actually want to use
+# Uncomment the healthcheck you actually want to use  - ping check is default
 
 #sh check-ipv6-ping  $1 $2 $3 $4
 #sh Exchange-2013.sh $1 $2 $3 $4
