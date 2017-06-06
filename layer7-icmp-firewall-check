@@ -1,5 +1,5 @@
 #!/bin/bash
-PATH=/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
+PATH=/usr/bin:/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
 #
 # Layer7 drop ICMP if all real servers are down. 
 # adapt firewall rules to suit - this just drops icmp type 8 packets
@@ -16,13 +16,13 @@ for RIP in $RIPS; do
 done
 if [ $up -eq 1 ]
 then
-        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11) -eq 0 ]]
+        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11) -eq "DROP" ]]
         then
 		iptables -A INPUT -d $VIPIP -j DROP   # DROP All Traffic
         fi
 elif [ $up -eq 0 ]
 then
-        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11) -eq 1 ]]
+        if [[ $(iptables -L -v | grep $VIPIP | cut -d' ' -f11) -eq "DROP" ]]
         then
 		iptables -D INPUT -d $VIPIP -j DROP   # ALLOW All Traffic
         fi
