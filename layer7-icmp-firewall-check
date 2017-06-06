@@ -5,7 +5,7 @@ PATH=/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
 # adapt firewall rules to suit - this just drops icmp type 8 packets
 # Created by Andrew Smalley ' loadbalancer.org (c)2017 June 6
 VIP=CHANGE.TO.YOUR.VIP.NAME
-VIPIP=192.168.2.21
+VIPIP=$1
 
 RIPS=$(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | cut -d"," -f2 | grep -v "FRONTEND" | grep -v "backup" | grep -v "BACKEND")
 for RIP in $RIPS; do
@@ -21,7 +21,7 @@ then
                 iptables -A INPUT -d $VIPIP -p icmp --icmp-type 8 -j DROP
 	#	iptables -A INPUT -d $VIPIP -j DROP   # DROP All Traffic
         fi
-elif [ $ec -eq 0 ]
+elif [ $up -eq 0 ]
 then
         if [[ $(iptables -L -v | grep -c echo-request) -eq 1 ]]
         then
