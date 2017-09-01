@@ -14,16 +14,16 @@ ipvsadm --list | grep $VIP -a1 | grep Route >/dev/null
 ec=$?
 if [ $ec -eq 1 ]
 then
-	if [[ $(iptables -L -v | grep -c echo-request) -eq 0 ]]
-	then
-		iptables -A INPUT -d $VIP -p icmp --icmp-type 8 -j DROP
-	fi
+        if [[ $(iptables -L -v | grep $VIP | grep -c echo-request)  -eq 0 ]]
+        then
+                iptables -A INPUT -d $VIP -p icmp --icmp-type 8 -j DROP
+        fi
 elif [ $ec -eq 0 ]
 then
-	if [[ $(iptables -L -v | grep -c echo-request) -eq 1 ]]
-	then  
-		iptables -D INPUT -d $VIP -p icmp --icmp-type 8 -j DROP
-	fi
+        if [[ $(iptables -L -v | grep $VIP | grep -c echo-request) -eq 1 ]]
+        then
+                iptables -D INPUT -d $VIP -p icmp --icmp-type 8 -j DROP
+        fi
 fi
 
 # Uncomment the healthcheck you actually want to use
@@ -41,6 +41,4 @@ fi
 sh ping.sh $1 $2 $3 $4
 #sh sip_check.pl $1 $2 $3 $4
 #sh sni-check.sh $1 $2 $3 $4
-
-
 
