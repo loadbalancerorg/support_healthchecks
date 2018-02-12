@@ -12,7 +12,7 @@ CHECK_TIMEOUT="5"            # Port time out value.
 
 # Health check the favico.ico file looking for a response of "HTTP/1.1 200 OK", can manually be called ./favico.ico 0 0 <RIP> <RIP_PORT>
 
-curl -m 5 -s -k -I https://$CHECK_IP:$CHECK_PORT/favicon.ico | head -1 | grep "HTTP/1.1 200 OK"
+curl -m $CHECK_TIMEOUT -s -k -I https://$CHECK_IP:$CHECK_PORT/favicon.ico | head -1 | grep "HTTP/1.1 200 OK"
        
 
 
