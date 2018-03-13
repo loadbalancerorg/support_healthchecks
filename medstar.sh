@@ -65,17 +65,13 @@ function check-statuscode {
 	if	[ $(cat $OUTPUTDIR/rip1.log) -eq 0 ]
 	then	
 		EXIT_CODE2=0
-	        lbcli --action online --vip $VIP1 --rip $RIP1
-	        lbcli --action online --vip $VIP2 --rip $RIP1
-	        lbcli --action online --vip $VIP3 --rip $RIP1
+	        lbcli --action online --vip $VIP1 --rip $RIP1 --action online --vip $VIP2 --rip $RIP1 --action online --vip $VIP3 --rip $RIP1
 	else 
 		if	[ $(cat $OUTPUTDIR/rip1.log) -eq 1 ]
 		then
 		EXIT_CODE2=1
 		echo "$(date '+%Y-%m-%d_%H:%M:%S') $REAL_IP"  >> $OUTPUTDIR/faillog.log
-		lbcli --action halt --vip $VIP1 --rip $RIP1
-		lbcli --action halt --vip $VIP2 --rip $RIP1
-		lbcli --action halt --vip $VIP3 --rip $RIP1
+		lbcli --action halt --vip $VIP1 --rip $RIP1 --action halt --vip $VIP2 --rip $RIP1 --action halt --vip $VIP3 --rip $RIP1
 		fi
 	fi
 }
