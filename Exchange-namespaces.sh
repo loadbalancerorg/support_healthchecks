@@ -26,7 +26,7 @@ ACTIVESYNC_HOST="activesync.${DOMAIN}"
 AUTODISCOVER_HOST="autodiscover.${DOMAIN}"
 
 ## Outlook Web App (OWA)
-        curl -s -k -I -H "Host: ${OWA_HOST}" https://$CHECK_IP:443/OWA/HealthCheck.htm | grep 200 >>/dev/null
+        curl -m 2 -s -k -I -H "Host: ${OWA_HOST}" https://$CHECK_IP:443/OWA/HealthCheck.htm | grep 200 >>/dev/null
         if [ "$?" -eq "0" ]; then
                 OWA_HTTP_CHECK="0"
         else
@@ -34,7 +34,7 @@ AUTODISCOVER_HOST="autodiscover.${DOMAIN}"
         fi
 
 ## Exchange Web Services (EWS)
-        curl -s -k -I  -H "Host: ${EWS_HOST}" https://$CHECK_IP:443/EWS/HealthCheck.htm | grep 200 >>/dev/null
+        curl -m 2 -s -k -I  -H "Host: ${EWS_HOST}" https://$CHECK_IP:443/EWS/HealthCheck.htm | grep 200 >>/dev/null
         if [ "$?" -eq "0" ]; then
                 EWS_HTTP_CHECK="0"
         else
@@ -42,7 +42,7 @@ AUTODISCOVER_HOST="autodiscover.${DOMAIN}"
         fi
 
 ## Offline Address Book (OAB)
-        curl -s -k -I  -H "Host: ${OAB_HOST}" https://$CHECK_IP:443/OAB/HealthCheck.htm | grep 200 >>/dev/null
+        curl -m 2 -s -k -I  -H "Host: ${OAB_HOST}" https://$CHECK_IP:443/OAB/HealthCheck.htm | grep 200 >>/dev/null
         if [ "$?" -eq "0" ]; then
                 OAB_HTTP_CHECK="0"
         else
@@ -50,7 +50,7 @@ AUTODISCOVER_HOST="autodiscover.${DOMAIN}"
         fi
 
 ## MAPI
-        curl -s -k -I  -H "Host: ${MAPI_HOST}" https://$CHECK_IP:443/mapi/HealthCheck.htm | grep 200 >>/dev/null
+        curl -m 2 -s -k -I  -H "Host: ${MAPI_HOST}" https://$CHECK_IP:443/mapi/HealthCheck.htm | grep 200 >>/dev/null
         if [ "$?" -eq "0" ]; then
                 MAPI_HTTP_CHECK="0"
         else
@@ -58,7 +58,7 @@ AUTODISCOVER_HOST="autodiscover.${DOMAIN}"
         fi
 
 ## RPC
-        curl -s -k -I  -H "Host: ${RPC_HOST}" https://$CHECK_IP:443/RPC/HealthCheck.htm | grep 200  >>/dev/null
+        curl -m 2 -s -k -I  -H "Host: ${RPC_HOST}" https://$CHECK_IP:443/RPC/HealthCheck.htm | grep 200  >>/dev/null
         if [ "$?" -eq "0" ]; then
                 RPC_HTTP_CHECK="0"
         else
@@ -66,7 +66,7 @@ AUTODISCOVER_HOST="autodiscover.${DOMAIN}"
         fi
 
 ## ActiveSync
-        curl -s -k -I  -H "Host: ${ACTIVESYNC_HOST}" https://$CHECK_IP:443/ActiveSync/HealthCheck.htm | grep 200 >>/dev/null
+        curl -m 2 -s -k -I  -H "Host: ${ACTIVESYNC_HOST}" https://$CHECK_IP:443/ActiveSync/HealthCheck.htm | grep 200 >>/dev/null
         if [ "$?" -eq "0" ]; then
                 ACTIVESYNC_HTTP_CHECK="0"
         else
@@ -74,7 +74,7 @@ AUTODISCOVER_HOST="autodiscover.${DOMAIN}"
         fi
 
 ## AutoDiscover
-        curl -s -k -I  -H "Host: ${AUTODISCOVER_HOST}" https://$CHECK_IP:443/Autodiscover/Autodiscover.xml | grep 200 >>/dev/null
+        curl -m 2 -s -k -I  -H "Host: ${AUTODISCOVER_HOST}" https://$CHECK_IP:443/Autodiscover/Autodiscover.xml | grep 200 >>/dev/null
         if [ "$?" -eq "0" ]; then
                 AUTODISCOVER_HTTP_CHECK="0"
         else
