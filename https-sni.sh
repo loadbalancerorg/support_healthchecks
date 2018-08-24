@@ -1,5 +1,16 @@
 #!/bin/bash
-set -x
+#set -x
+
+#############################################################
+#
+# Script to check https RIPs using SNI
+#
+# (c) Loadbalancer.org 2018
+#
+# Neil Stone <support@loadbalancer.org>
+#
+#############################################################
+
 
 #VIP=${1}
 #VPT=${2}
@@ -32,4 +43,6 @@ CURL_OPTS="--resolve ${CHECK_HOST}:${CHECK_PORT}:${CHECK_IP}"
 
 curl ${CURL_OPTS} -H 'Host: ${CHECK_HOST}' -m 2 -i -k https://${CHECK_HOST}/${CHECK_PATH} | grep -q ${CHECK_STRING}
 
-${?}
+EXIT_STATE=${?}
+
+exit ${EXIT_STATE}
