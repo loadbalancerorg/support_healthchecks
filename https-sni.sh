@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+PATH=/usr/bin:/bin
 
 #############################################################
 #
@@ -8,6 +8,7 @@
 # (c) Loadbalancer.org 2018
 #
 # 2018-08-24 - Initial write - Neil Stone <support@loadbalancer.org>
+# 2018-08-30 - Added PATH statement - Neil Stone <support@loadbalancer.org>
 #
 #############################################################
 
