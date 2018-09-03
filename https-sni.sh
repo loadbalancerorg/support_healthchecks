@@ -41,7 +41,7 @@ fi
 
 CURL_OPTS="--resolve ${CHECK_HOST}:${CHECK_PORT}:${CHECK_IP}"
 
-curl ${CURL_OPTS} -H 'Host: '${CHECK_HOST}'' -m 2 -i -k https://${CHECK_HOST}/${CHECK_PATH} 2>/dev/null | grep -q "${CHECK_STRING}"
+curl ${CURL_OPTS} -H 'Host: '${CHECK_HOST}'' -m 2 -k https://${CHECK_HOST}/${CHECK_PATH} 2>/dev/null | grep -q "${CHECK_STRING}"
 
 EXIT_STATE=${?}
 
