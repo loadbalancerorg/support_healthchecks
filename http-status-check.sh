@@ -6,9 +6,8 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 #
 # Script to check for a defined http status and pass if it's presented.
 #
-# Neil Stone - support@loadbalancer.org
 #
-# v 1.0 initial commit
+# 2018-09-04 - Changed logic for setting CHECK_PORT - Neil Stone <support@loadbalancer.org>
 #
 ########################################################################
 
