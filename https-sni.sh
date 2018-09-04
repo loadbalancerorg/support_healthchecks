@@ -9,9 +9,9 @@ PATH=/usr/bin:/bin
 #
 # 2018-08-24 - Initial write - Neil Stone <support@loadbalancer.org>
 # 2018-08-30 - Added PATH statement - Neil Stone <support@loadbalancer.org>
+# 2018-09-04 - Changed 'if' statement to handle L4/L7 shenanigans - Neil Stone <support@loadbalancer.org>
 #
 #############################################################
-
 
 #VIP=${1}
 #VPT=${2}
@@ -33,7 +33,10 @@ fi
 # Script Variables for check port.
 CHECK_IP="${3}"
 
-if [ -z "${4}" ]; then
+# HAProxy always passes 4 vars, where check port is 0 unless defined in config.
+# ldirectord passes 3 or 4 depending on RIP port definition.
+
+if [ "${4}" == "0" ] || [ -z "${4}" ]; then
     CHECK_PORT="${2}"
 else
     CHECK_PORT="${4}"
