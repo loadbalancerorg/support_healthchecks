@@ -26,10 +26,10 @@ fi
 #Script Variables for check port.
 CHECK_IP="${3}"
 
-if [ ! -z "${4}" ]; then
-    CHECK_PORT="${4}"
-else
+if [ "${4}" == "0" ] || [ -z "${4}" ]; then
     CHECK_PORT="${2}"
+else
+    CHECK_PORT="${4}"
 fi
 
 ### Set the absolute path here...
