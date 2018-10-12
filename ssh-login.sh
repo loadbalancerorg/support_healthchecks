@@ -39,11 +39,13 @@ VIP=${1}
 VPT=${2}
 RIP=${3}
 
-if [ $# -eq 3 ]; then
-    RPT=${2}
+
+if [ "${4}" == "0" ] || [ -z "${4}" ]; then
+    RPT="${2}"
 else
-    RPT=${4}
+    RPT="${4}"
 fi
+
 
 timeout ${TIMEOUT} sshpass -f${PWFILE} ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 -l ${SSHUSER} -p ${RPT} ${3} echo > /dev/null 2> /dev/null
 
