@@ -1,0 +1,23 @@
+#!/bin/bash
+# loadbalancer.org (c)2019 ntlm application healthcheck
+vip=$1
+vpt=$2
+rip=$3
+rpt=$4
+
+# Please replace ?? in checkpath and responseexpected
+
+checkhost="intranet2-stg.domain.global"
+
+checkpath="/??/??"
+
+responseexpected="??????"
+
+username="testuser"
+password="password"
+
+curlopts="--ntlm -u ${user}:${password} --resolve ${checkhost}:${rip}:${rip}"
+
+# Run curl with appropriate options
+curl ${curlopts} -H 'Host: '${checkhost}'' -m 2 -k https://${checkhost}/${checkpath} 2>/dev/null | grep -q "${responseexpected}"
+
