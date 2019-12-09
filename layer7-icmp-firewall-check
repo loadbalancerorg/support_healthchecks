@@ -5,7 +5,7 @@ PATH=/usr/bin:/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
 # adapt firewall rules to suit - this just drops packets to the VIP
 # Created by Andrew Smalley ' loadbalancer.org (c)2017 June 6
 
-VIP=VIPTOCHECK
+VIP=VIPTOCHECK # What is this variable good for? It's not used in this script at all.
 VIPIP=$1
 UP=0
 RIPS=$(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | cut -d"," -f2 | grep -v "FRONTEND" | grep -v "backup" | grep -v "BACKEND")
