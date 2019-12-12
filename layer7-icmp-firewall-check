@@ -4,13 +4,37 @@ PATH=/usr/bin:/var/lib/loadbalancer.org/check/:/usr/local/sbin/:/bin/:/sbin/
 # Layer7 iptables DROP if all real servers are down.
 # adapt firewall rules to suit - this just drops packets to the VIP
 # Created by Andrew Smalley ' loadbalancer.org (c)2017 June 6
+# 2019-12-11 Adapted by Thorsten Wetzig, Loadbalancer.org, some fixes and added a docu
 
-VIP=VIPTOCHECK # What is this variable good for? It's not used in this script at all.
+# This script can be used as an external health check script for haproxy (layer 7).
+# It consists of two parts.
+# In part 1 it checks if all servers are down. If all servers are down then it sets a firewall rule
+# that blocks (DROP) all traffic to the VIP.
+# In part 2 it calls the actual load balancing script. Just enable the line you need.
+
+# How to use the script
+#
+# You need to change the value for VS_LABEL to the label of your virtual layer 7 service in use before
+# you can use the script.
+# Enable the line you need in part 2 or add a new line for a script you uploaded to the load balancers.
+# scp the script to folder /var/lib/loadbalancer.org/check/ on both nodes master and slave.
+# ssh into the load balancers and call
+# chown root:root /var/lib/loadbalancer.org/check/layer7-icmp-firewall-check
+# chmod 755 /var/lib/loadbalancer.org/check/layer7-icmp-firewall-check
+# In the WebUI of the load balancer click Modify for the virtual service and change the health check 
+# settings to External script and select this check script.
+# Reload HAProxy.
+# Now when all servers fail the health check then you see the DROP firewall rule added in menu
+# View Configuration > Firewall Rules.
+
+# Part 1
+
+VS_LABEL=acl_test
 VIPIP=$1
 UP=0
-RIPS=$(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | cut -d"," -f2 | grep -v "FRONTEND" | grep -v "backup" | grep -v "BACKEND")
+RIPS=$(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep "^${VS_LABEL}," | cut -d"," -f2 | grep -v "^FRONTEND$" | grep -v "^backup$" | grep -v "^BACKEND$")
 for RIP in $RIPS; do
-        if [[ $(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep $VIP | grep $RIP | cut -d"," -f18 | grep -c UP) -eq 1 ]]
+        if [[ $(echo "show stat" | socat unix-connect:/var/run/haproxy.stat stdio | grep "^${VS_LABEL}," | grep ",${RIP}," | cut -d"," -f18 | grep -c UP) -eq 1 ]]
         then
                 UP=1
         fi
@@ -29,19 +53,21 @@ then
                 iptables -D INPUT -d $VIPIP -j DROP   # ALLOW All Traffic
         fi
 fi
+
+# Part 2
+
 # Uncomment the healthcheck you actually want to use
 
-#sh check-ipv6-ping  $1 $2 $3 $4
-#sh Exchange-2013.sh $1 $2 $3 $4
-#sh http_ntlm_proxy_check.sh $1 $2 $3 $4
-#sh Multi-port-check.sh $1 $2 $3 $4
-#sh proxy-check.sh $1 $2 $3 $4
-#sh SMTP-check.sh $1 $2 $3 $4
-#sh sni-check-v2.sh $1 $2 $3 $4
-#sh DICOM-C-ECHO $1 $2 $3 $4
-#sh Exchange_IMAP.sh $1 $2 $3 $4
-#sh icmp-firewall-check $1 $2 $3 $4
-sh ping.sh $1 $2 $3 $4
-#sh sip_check.pl $1 $2 $3 $4
-#sh sni-check.sh $1 $2 $3 $4
-
+#sh check-ipv6-ping  $1 $2 $3 $4 $5
+#sh Exchange-2013.sh $1 $2 $3 $4 $5
+#sh http_ntlm_proxy_check.sh $1 $2 $3 $4 $5
+#sh Multi-port-check.sh $1 $2 $3 $4 $5
+#sh proxy-check.sh $1 $2 $3 $4 $5
+#sh SMTP-check.sh $1 $2 $3 $4 $5 
+#sh sni-check-v2.sh $1 $2 $3 $4 $5
+#sh DICOM-C-ECHO $1 $2 $3 $4 $5
+#sh Exchange_IMAP.sh $1 $2 $3 $4 $5
+#sh icmp-firewall-check $1 $2 $3 $4 $5
+sh ping.sh $1 $2 $3 $4 $5
+#sh sip_check.pl $1 $2 $3 $4 $5
+#sh sni-check.sh $1 $2 $3 $4 $5
