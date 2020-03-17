@@ -11,6 +11,7 @@ PATH=/usr/bin:/bin
 # 2018-08-30 - Added PATH statement - Neil Stone <support@loadbalancer.org>
 # 2018-09-04 - Changed 'if' statement to handle L4/L7 shenanigans - Neil Stone <support@loadbalancer.org>
 # 2019-01-14 - Added some comments to make the script more user understandable - Neil Stone <support@loadbalancer.org>
+# 2020-03-17 - Included real server port in curl request - Neil Stone <support@loadbalancer.org>
 #
 #############################################################
 
@@ -53,7 +54,7 @@ fi
 CURL_OPTS="--resolve ${CHECK_HOST}:${CHECK_PORT}:${CHECK_IP}"
 
 # Run curl with appropriate options
-curl ${CURL_OPTS} -H 'Host: '${CHECK_HOST}'' -m 2 -k https://${CHECK_HOST}/${CHECK_PATH} 2>/dev/null | grep -q "${CHECK_STRING}"
+curl ${CURL_OPTS} -H 'Host: '${CHECK_HOST}'' -m 2 -k https://${CHECK_HOST}:${CHECK_PORT}/${CHECK_PATH} 2>/dev/null | grep -q "${CHECK_STRING}"
 
 EXIT_STATE=${?}
 
