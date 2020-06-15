@@ -24,6 +24,8 @@ CHECK_PATH="LoadbalancerStatus.php"
 # CHECK_STRING is the string to detect for upon success, should be returned early in the result of the GET
 CHECK_STRING="Success"
 
+# CHECK_TIME is the number of seconds the cURL command is allowed to run before exiting. (Exit state 28)
+CHECK_TIME="2"
 
 ### Nothing below here should need changing...
 
@@ -54,7 +56,7 @@ fi
 CURL_OPTS="--resolve ${CHECK_HOST}:${CHECK_PORT}:${CHECK_IP}"
 
 # Run curl with appropriate options
-curl ${CURL_OPTS} -H 'Host: '${CHECK_HOST}'' -m 2 -k https://${CHECK_HOST}:${CHECK_PORT}/${CHECK_PATH} 2>/dev/null | grep -q "${CHECK_STRING}"
+curl ${CURL_OPTS} -H 'Host: '${CHECK_HOST}'' -m ${CHECK_TIME} -k https://${CHECK_HOST}:${CHECK_PORT}/${CHECK_PATH} 2>/dev/null | grep -q "${CHECK_STRING}"
 
 EXIT_STATE=${?}
 
