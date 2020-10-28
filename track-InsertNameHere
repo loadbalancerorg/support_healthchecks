@@ -1,0 +1,79 @@
+#!/bin/sh
+#  _    ___   ___  ___  ___
+# | |  | _ ) / _ \| _ \/ __|
+# | |__| _ \| (_) |   / (_ |
+# |____|___(_)___/|_|_\\___|
+#       track-[Insert Name Here] health check
+# Copyright (c) 2020 Loadbalancer.org Ltd.
+#
+# Changelog:
+#
+# 2020-10-27: Peter Statham: Initial version.
+#
+# Usage:
+#
+# track-[Insert Name Here] IPAddress Port
+#
+# This Health Check passes if another Layer 7 Virtual Service (named in
+# filename and optionally followed by .sh) has any Real Servers in the UP
+# state and additionally sets an iptables rule to refuse connections to
+# this Virtual Service when it fails.  This is particularly useful for WAFs
+# where you wish to track the availability of the service.
+#
+# Note that the Real Servers for a Virtual Server that uses the "No checks,
+# always On" never successfully pass a health check (no check is performed)
+# so these servers will never be UP even if they receive traffic.
+#
+# Also be aware that if you remove this healthcheck while the iptables rule
+# is installed you will need to remove it manually by running:
+#
+# iptables -D INPUT --protocol tcp --destination $IP --dport $PORT -j REJECT
+#
+
+# Suppress all output
+exec >/dev/null 2>/dev/null
+
+# Smuggle an extra argument (the name of the L7 VIP to track) in the filename.
+other_vip=$(basename "$0")
+other_vip=${other_vip#track-}
+other_vip=${other_vip%.sh}
+
+# The IPTables rule to find, add or remove.
+rule="INPUT --protocol tcp --destination $1 --dport $2 -j REJECT"
+
+# Read out select fields from the HAProxy status.
+# Exit with 0 (Success) if any iteration returns non-zero.
+echo "show stat" \
+  | /usr/bin/socat - /var/run/haproxy.stat \
+  | /bin/cut -f 1,2,18 -d, \
+  | while IFS="," read VIP RIP STATUS; do
+
+	# Filter out irrelevant rows.
+	if [ "$VIP" != "$other_vip" ]; then
+		continue
+	fi
+	case "$RIP" in
+		FRONTEND|BACKEND|backup)
+			continue
+			;;
+	esac
+
+	# Check this row.
+	if [ "$STATUS" = "UP" ]; then
+		# A Real Server in the UP state was found.
+		# Remove a rule to block this Virtual Service if one exists.
+		while /usr/local/sbin/iptables -C $rule; do
+			/usr/local/sbin/iptables -D $rule
+		done
+		exit 1
+	fi
+done || exit 0
+
+# If we get here then no Real Servers in the UP state were found.
+# Add a rule to block this Virtual Service if one does not exist.
+if ! /usr/local/sbin/iptables -C $rule; then
+	/usr/local/sbin/iptables -A $rule
+fi
+
+# Exit with 1 (Failure).
+exit 1
