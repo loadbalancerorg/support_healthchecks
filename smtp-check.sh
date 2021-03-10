@@ -9,8 +9,8 @@ PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
 #
 
 # Set these as required
-SENDER=sender@mydomain.com
-MAILTO=recipient@mydomain.com
+SENDER=administrator@root.dom
+MAILTO=administrator@root.dom
 
 ### Nothing below here should need adjustment ###
 
@@ -25,7 +25,7 @@ else
     RPT="${4}"
 fi
 
-curl --silent --max-time 3 --insecure smtp://${RIP}:${RPT}  --mail-from "${SENDER}" --mail-rcpt "${MAILTO}" > /dev/null
+echo | curl -T - --silent --max-time 3 --insecure smtp://${RIP}:${RPT}  --mail-from "${SENDER}" --mail-rcpt "${MAILTO}" > /dev/null
 EC=${?}
 
 exit ${EC}
