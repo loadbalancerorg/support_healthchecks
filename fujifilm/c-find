@@ -1,0 +1,165 @@
+#!/bin/bash
+###############################################################################
+# Fijifilm C-FIND Healthcheck v0.1 
+#
+# (c)loadbalancer.org 2021 - Created by Andrew Smalley
+#
+# Healthchck uses /usr/local/bin/findscu 
+#
+# any of the options can be defined in the check
+#
+###############################################################################
+# virtual service and port or source should not need altering
+
+VIRTUALSERVICE=$1
+VIRTUALPORT=$2
+VIRTUALSOURCE=$5
+CHECKTIMEOUT=5
+
+# this does not work with auto firewall marks, it can be made to do so simply. 
+# this does not work with manual firewall marks, that would be interesting to 
+# create but can also be done with less ease (I tried before)
+#
+# Be aware DICOM will very likely respond on a different port  
+
+TIMEOUT=4
+
+
+# options: 
+#                               set my calling options
+
+OPTIONS="--ignore-peer-cert --null-passwd "
+
+
+# [a]etitle: string
+#                               set my calling AE title (default: FINDSCU)
+AET="FINDSCU"
+
+[a]etitle: string
+#                               set called AE title of peer (default: ANY-SCP)
+ACT="ANY-SCP"
+
+# DICOM PEER and PORT
+PEER=$3
+PORT=$4
+
+# dcmfile_in: The DICOM Query file to be sent
+
+DCMFILEIN=""
+
+MODE="--quiet " # --debug
+
+# The healthcheck
+timeout $CHECKTIMEOUT \
+/usr/local/bin/findscu \
+$MODE \
+-to $TIMEOUT \
+$OPTIONS \
+$PEER \
+$PORT \
+$DCMFILEIN
+
+exit $?
+
+
+# I just exited with the exitcode of findscu, unless 0,1 operation this 
+# does NOT need changing, we are binary 0 or 1, 0 passes, !0 fails
+#
+###############################################################################
+#$dcmtk: findscu v3.6.0 2011-01-06 $
+#
+#findscu: DICOM query (C-FIND) SCU
+#usage: findscu $options$ $peer $port [dcmfile-in...]
+#
+#parameters:
+#  peer                         hostname of DICOM peer
+#  port                         tcp/ip port number of peer
+#  dcmfile-in                   DICOM query file(s)
+#
+#general options:
+#  -h      --help               print this help text and exit
+#          --version            print version information and exit
+#          --arguments          print expanded command line arguments
+#  -q      --quiet              quiet mode, print no warnings and errors
+#  -v      --verbose            verbose mode, print processing details
+#  -d      --debug              debug mode, print debug information
+#  -ll     --log-level          [l]evel: string constant
+#                               (fatal, error, warn, info, debug, trace)
+#                               use level l for the logger
+#  -lc     --log-config         [f]ilename: string
+#                               use config file f for the logger
+#network options:
+#  override matching keys:
+#    -k    --key                [k]ey: gggg,eeee="str", path or dict. name="str"
+#                               override matching key
+#  query information model:
+#    -W    --worklist           use modality worklist information model (default)
+#    -P    --patient            use patient root information model
+#    -S    --study              use study root information model
+#    -O    --psonly             use patient/study only information model
+#  application entity titles:
+#    -aet  --aetitle            [a]etitle: string
+#                               set my calling AE title (default: FINDSCU)
+#    -aec  --call               [a]etitle: string
+#                               set called AE title of peer (default: ANY-SCP)
+#  post-1993 value representations:
+#    +u    --enable-new-vr      enable support for new VRs (UN/UT) (default)
+#    -u    --disable-new-vr     disable support for new VRs, convert to OB
+#  proposed transmission transfer syntaxes:
+#    -x=   --propose-uncompr    propose all uncompressed TS, explicit VR
+#                               with local byte ordering first (default)
+#    -xe   --propose-little     propose all uncompressed TS, explicit VR
+#                               little endian first
+#    -xb   --propose-big        propose all uncompressed TS, explicit VR
+#                               big endian first
+#    -xi   --propose-implicit   propose implicit VR little endian TS only
+#  other network options:
+#    -to   --timeout            [s]econds: integer (default: unlimited)
+#                               timeout for connection requests
+#    -ta   --acse-timeout       [s]econds: integer (default: 30)
+#                               timeout for ACSE messages
+#    -td   --dimse-timeout      [s]econds: integer (default: unlimited)
+#                               timeout for DIMSE messages
+#    -pdu  --max-pdu            [n]umber of bytes: integer (4096..131072)
+#                               set max receive pdu to n bytes (default: 16384)
+#          --repeat             [n]umber: integer
+#                               repeat n times
+#          --abort              abort association instead of releasing it
+#          --cancel             [n]umber: integer
+#                               cancel after n responses (default: never)
+#    -X    --extract            extract responses to file (rsp0001.dcm, ...)
+#transport layer security (TLS) options:
+#  transport protocol stack:
+#    -tls  --disable-tls        use normal TCP/IP connection (default)
+#    +tls  --enable-tls         [p]rivate key file, [c]ertificate file: string
+#                               use authenticated secure TLS connection
+#    +tla  --anonymous-tls      use secure TLS connection without certificate
+#  private key password (only with --enable-tls):
+#    +ps   --std-passwd         prompt user to type password on stdin (default)
+#    +pw   --use-passwd         [p]assword: string 
+#                               use specified password
+#    -pw   --null-passwd        use empty string as password
+#  key and certificate file format:
+#    -pem  --pem-keys           read keys and certificates as PEM file (default)
+#    -der  --der-keys           read keys and certificates as DER file
+#  certification authority:
+#    +cf   --add-cert-file      [c]ertificate filename: string
+#                               add certificate file to list of certificates
+#    +cd   --add-cert-dir       [c]ertificate directory: string
+#                               add certificates in d to list of certificates
+#  ciphersuite:
+#    +cs   --cipher             [c]iphersuite name: string
+#                               add ciphersuite to list of negotiated suites
+#    +dp   --dhparam            [f]ilename: string
+#                               read DH parameters for DH/DSS ciphersuites
+#  pseudo random generator:
+#    +rs   --seed               [f]ilename: string
+#                               seed random generator with contents of f
+#    +ws   --write-seed         write back modified seed (only with --seed)
+#    +wf   --write-seed-file    [f]ilename: string (only with --seed)
+#                              write modified seed to file f
+#  peer authentication:
+#    -rc   --require-peer-cert  verify peer certificate, fail if absent (default)
+#    -vc   --verify-peer-cert   verify peer certificate if present
+#    -ic   --ignore-peer-cert   don't verify peer certificate
+###############################################################################

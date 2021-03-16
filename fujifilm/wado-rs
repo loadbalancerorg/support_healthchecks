@@ -1,0 +1,3 @@
+#!/bin/bash
+# wado-rs v1 healthcheck - use curl exit code
+curl -X GET http://$3:$4/wado-rs
