@@ -62,7 +62,7 @@ PSONLY="" #"-O "
 OPTIONS="-aet $AET -act $ACT $KEY $WORKLIST $PATITENT $STUDY $PSONLY --ignore-peer-cert --null-passwd "
 
 # dcmfile_in: dcmfile-in  DICOM file or directory to be transmitted
-DCMFILEIN=""
+DCMFILEIN="dicom/MRBRAIN.DCM"
 
 # Below likely does not need editing
 #
