@@ -79,6 +79,24 @@ timeout $CHECK_TIMEOUT $HEALTH_CHECK_CMD $MODE -to $SCU_TIMEOUT \
 exit $?
 #
 exit 99
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 $dcmtk: findscu v3.6.0 2011-01-06 $
 
 findscu: DICOM query (C-FIND) SCU

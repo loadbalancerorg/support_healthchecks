@@ -81,6 +81,22 @@ timeout $CHECK_TIMEOUT $HEALTH_CHECK_CMD $MODE -to $SCU_TIMEOUT \
 exit $?
 #
 exit 99
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 $dcmtk: movescu v3.6.0 2011-01-06 $
 
 movescu: DICOM retrieve (C-MOVE) SCU
