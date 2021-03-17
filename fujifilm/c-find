@@ -1,6 +1,6 @@
 #!/bin/bash
 ###############################################################################
-# Fijifilm C-FIND Healthcheck v0.1 
+# Fijifilm C-FIND SCU Healthcheck v0.1 
 #
 # (c)loadbalancer.org 2021 - Created by Andrew Smalley
 #
@@ -8,10 +8,12 @@
 #
 # any of the options can be defined in the check
 #
+# https://support.dcmtk.org/docs-354/findscu.html
+#
 ###############################################################################
 # virtual service and port or source should not need altering
 
-HEALTH_CHECK_CMD="/usr/local/bin/fincscu"
+HEALTH_CHECK_CMD="/usr/local/bin/findscu"
 
 VIRTUALSERVICE=$1
 VIRTUALPORT=$2
@@ -38,7 +40,6 @@ ACT="ANY-SCP"
 PEER=$3
 PORT=$4
 
-
 #network options: customise and add these to options
 #
 #  override matching keys:
@@ -63,8 +64,6 @@ OPTIONS="-aet $AET -act $ACT $KEY $WORKLIST $PATITENT $STUDY $PSONLY --ignore-pe
 # dcmfile_in: dcmfile-in  DICOM file or directory to be transmitted
 DCMFILEIN=""
 
-
-
 # Below likely does not need editing
 #
 # Use VirtualService Port if Real Server port is inherited. 
@@ -77,13 +76,9 @@ MODE="--quiet " # --debug
 # The healthcheck
 timeout $CHECK_TIMEOUT $HEALTH_CHECK_CMD $MODE -to $SCU_TIMEOUT \
 		$OPTIONS $PEER $PORT $DCMFILEIN
-
 exit $?
-
-
-
+#
 exit 99
-
 $dcmtk: findscu v3.6.0 2011-01-06 $
 
 findscu: DICOM query (C-FIND) SCU

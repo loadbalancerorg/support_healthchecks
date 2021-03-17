@@ -1,6 +1,6 @@
 #!/bin/bash
 ###############################################################################
-# Fijifilm C-MOVE Healthcheck v0.1 
+# Fijifilm C-MOVE SCU Healthcheck v0.1 
 #
 # (c)loadbalancer.org 2021 - Created by Andrew Smalley
 #
@@ -8,11 +8,12 @@
 #
 # any of the options can be defined in the check
 #
+# https://support.dcmtk.org/docs-354/movescu.html
+#
 ###############################################################################
 # virtual service and port or source should not need altering
 
-
-
+HEALTH_CHECK_CMD="/usr/local/bin/movescu"
 
 VIRTUALSERVICE=$1
 VIRTUALPORT=$2
@@ -43,7 +44,6 @@ AEM="MOVESCU"
 PEER=$3
 PORT=$4
 
-
 #network options: customise and add these to options
 #
 #  override matching keys:
@@ -52,8 +52,6 @@ PORT=$4
 
 KEY="" #"-k "
 #  query information model:
-#    -W    --worklist           use modality worklist information model (default)
-WORKLIST="" #"-W "
 #    -P    --patient            use patient root information model
 PATITENT="" #"-P "
 #    -S    --study              use study root information model
@@ -68,8 +66,6 @@ OPTIONS=" -aet $AET -act $ACT -aem $AEM $KEY $WORKLIST $PATITENT $STUDY $PSONLY 
 # dcmfile_in: dcmfile-in  DICOM file or directory to be transmitted
 DCMFILEIN=""
 
-
-
 # Below likely does not need editing
 #
 # Use VirtualService Port if Real Server port is inherited. 
@@ -80,27 +76,11 @@ fi
 MODE="--quiet " # --debug
 
 # The healthcheck
-
-
-
 timeout $CHECK_TIMEOUT $HEALTH_CHECK_CMD $MODE -to $SCU_TIMEOUT \
     $OPTIONS $PEER $PORT $DCMFILEIN
-
 exit $?
-
-
-
+#
 exit 99
-
-
-
-
-
-exit 99
-
-
-
-
 $dcmtk: movescu v3.6.0 2011-01-06 $
 
 movescu: DICOM retrieve (C-MOVE) SCU
