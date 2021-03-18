@@ -8,6 +8,8 @@ PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
 # Use netcat to check for basic SMTP function
 #
 
+TIMEOUT=3 # set this to the required number of seconds, suggest check interval -1
+
 ### Nothing below here should need adjustment ###
 
 VIP=${1}
@@ -21,7 +23,7 @@ else
     RPT="${4}"
 fi
 
-echo QUIT | nc ${RIP} ${RPT} | grep -q -e "^220"
+nc -w ${TIMEOUT} ${RIP} ${RPT} | grep -q -e "^220"
 
 EC=${?}
 
