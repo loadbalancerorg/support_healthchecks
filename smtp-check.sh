@@ -5,12 +5,8 @@ PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
 # SMTP Health check
 # CREATED BY: Neil Stone <support@loadbalancer.org>
 # DATE: 2021-03-10
-# Use cURL to check for basic SMTP function
+# Use netcat to check for basic SMTP function
 #
-
-# Set these as required
-SENDER=administrator@root.dom
-MAILTO=administrator@root.dom
 
 ### Nothing below here should need adjustment ###
 
@@ -25,7 +21,8 @@ else
     RPT="${4}"
 fi
 
-echo | curl -T - --silent --max-time 3 --insecure smtp://${RIP}:${RPT}  --mail-from "${SENDER}" --mail-rcpt "${MAILTO}" > /dev/null
+echo QUIT | nc ${RIP} ${RPT} | grep -q -e "^220"
+
 EC=${?}
 
 exit ${EC}
